@@ -1,18 +1,15 @@
 package com.hsalf.menuanim.widgets;
 
 import android.animation.IntEvaluator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.View;
 
-public class SliderImageView extends CardView implements ValueAnimator.AnimatorUpdateListener {
+public class SliderImageView extends View {
 
     private static final String TAG = "SliderImageView";
 
@@ -22,7 +19,6 @@ public class SliderImageView extends CardView implements ValueAnimator.AnimatorU
     private Rect mDrawBounds = new Rect();
     private Paint mBitmapPaint = new Paint();
     private IntEvaluator mIntEvaluator = new IntEvaluator();
-    private ValueAnimator mValueAnimator = new ValueAnimator();
 
     public SliderImageView(Context context) {
         super(context);
@@ -40,13 +36,7 @@ public class SliderImageView extends CardView implements ValueAnimator.AnimatorU
     }
 
     private void init() {
-        mValueAnimator.setDuration(2000);
-        mValueAnimator.setFloatValues(0, 1);
-        mValueAnimator.addUpdateListener(this);
-        mValueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-        mValueAnimator.setRepeatMode(ValueAnimator.REVERSE);
-        mValueAnimator.setRepeatCount(ValueAnimator.INFINITE);
-        // mValueAnimator.start();
+
     }
 
     public void setImageBitmap(Bitmap bitmap) {
@@ -63,12 +53,6 @@ public class SliderImageView extends CardView implements ValueAnimator.AnimatorU
     }
 
     @Override
-    public void setX(float x) {
-        super.setX(x);
-        Log.i(TAG, "X: " + x);
-    }
-
-    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         mSrcBounds.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
@@ -80,15 +64,11 @@ public class SliderImageView extends CardView implements ValueAnimator.AnimatorU
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (mBitmapImage != null) {
-            int width = mBitmapImage.getWidth() - getMeasuredWidth();
-            mSrcBounds.left = mIntEvaluator.evaluate(mAnimateFactor, 0, width);
-            mSrcBounds.right = getMeasuredWidth() + mSrcBounds.left;
+            int range = mBitmapImage.getWidth() - mDrawBounds.width();
+            mSrcBounds.left = Math.round(mAnimateFactor * range);
+            mSrcBounds.right = mDrawBounds.width() + mSrcBounds.left;
             canvas.drawBitmap(mBitmapImage, mSrcBounds, mDrawBounds, mBitmapPaint);
         }
     }
 
-    @Override
-    public void onAnimationUpdate(ValueAnimator animation) {
-        setAnimationFactor(animation.getAnimatedFraction());
-    }
 }

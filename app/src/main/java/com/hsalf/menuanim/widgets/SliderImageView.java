@@ -6,10 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class SliderImageView extends View {
+public class SliderImageView extends CardView {
 
     private static final String TAG = "SliderImageView";
 
